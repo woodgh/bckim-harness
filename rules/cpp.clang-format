@@ -1,0 +1,59 @@
+# C++ 하네스 스타일 — 사용자의 Forward·WndUI 실제 코드에서 추출 (rules/cpp.md)
+Language: Cpp
+Standard: c++20
+BasedOnStyle: Microsoft
+ColumnLimit: 0
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+BreakBeforeBraces: Allman
+AccessModifierOffset: -4
+IndentAccessModifiers: false
+NamespaceIndentation: None
+IndentCaseLabels: false
+IndentPPDirectives: None
+PointerAlignment: Left
+ReferenceAlignment: Left
+SpacesInAngles: Always
+SpaceBeforeParens: Custom
+SpaceBeforeParensOptions:
+  AfterControlStatements: true
+  AfterPlacementOperator: false
+  AfterRequiresInClause: false
+SpaceAfterTemplateKeyword: false
+SpaceAfterCStyleCast: false
+SpacesBeforeTrailingComments: 1
+AlignConsecutiveAssignments:
+  Enabled: false
+  EnumAssignments: true
+AlignConsecutiveDeclarations: None
+AlignConsecutiveMacros: None
+AlignTrailingComments: false
+AlignAfterOpenBracket: DontAlign
+AlignOperands: DontAlign
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortLambdasOnASingleLine: Empty
+AllowShortEnumsOnASingleLine: false
+AlwaysBreakTemplateDeclarations: Yes
+BreakConstructorInitializers: BeforeComma
+PackConstructorInitializers: Never
+ConstructorInitializerIndentWidth: 4
+EmptyLineBeforeAccessModifier: Leave
+EmptyLineAfterAccessModifier: Never
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
+SeparateDefinitionBlocks: Leave
+SortIncludes: Never
+IncludeBlocks: Preserve
+FixNamespaceComments: false
+InsertBraces: false
+ReflowComments: false
+Cpp11BracedListStyle: false
+RequiresClausePosition: OwnLine
+IndentRequiresClause: false
+SortUsingDeclarations: Never
+LambdaBodyIndentation: OuterScope
