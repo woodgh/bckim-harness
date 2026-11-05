@@ -129,50 +129,62 @@ ThirdParty/
 
 LLVM은 필요 없습니다. 빌드는 각 운영체제의 기본 컴파일러로 합니다.
 
-### 1. 저장소 받기
+### 1. 받고 설치하기
+
+#### macOS·Linux
 
 ```sh
 git clone https://github.com/woodgh/bckim-harness ~/orca/bckim-harness
+~/orca/bckim-harness/install.sh
+```
+
+`install.sh`는 저장소 파일을 각 도구의 설정 폴더에 링크로 연결합니다.
+
+| 도구 | 연결하는 것 |
+|---|---|
+| Claude Code | `~/.claude/CLAUDE.md`(기본 지침), `~/.claude/rules/*.md`(언어 규칙), `~/.claude/skills/bckim`(스킬) |
+| Codex | `~/.codex/AGENTS.md`와 Orca의 Codex 계정 폴더마다 `AGENTS.md`(기본 지침), `~/.agents/skills/<스킬>`(스킬) |
+| Gemini CLI | `~/.gemini/GEMINI.md`(기본 지침), `gemini`가 설치돼 있으면 확장 연결 |
+
+- 여러 번 실행해도 안전합니다. 이미 연결된 것은 건너뜁니다. 새 스킬·규칙을 추가했거나 Orca에서 Codex 계정을 새로 만들었으면 다시 실행하면 됩니다.
+- 같은 이름의 다른 파일이 있으면 덮어쓰지 않고 마지막에 목록으로 알려 줍니다. 내용을 확인해 옮긴 뒤 다시 실행하세요.
+- 다른 위치에 받아도 됩니다. 스킬이 규칙 파일을 `~/orca/bckim-harness/`로 가리키므로, 그 경로가 비어 있으면 저장소를 가리키는 링크를 만듭니다.
+
+#### Windows
+
+PowerShell에서 실행합니다.
+
+```powershell
+git clone https://github.com/woodgh/bckim-harness $HOME\orca\bckim-harness
+powershell -ExecutionPolicy Bypass -File $HOME\orca\bckim-harness\install.ps1
+```
+
+Windows는 연결 방식이 조금 다릅니다.
+
+| 대상 | 방식 |
+|---|---|
+| 스킬, 규칙 폴더 | 디렉터리 정션(관리자 권한 필요 없음). 규칙은 `~\.claude\rules\bckim` 폴더째 연결 |
+| 기본 지침 | 심볼릭 링크를 먼저 시도합니다. 관리자 권한이나 개발자 모드가 없어 실패하면 Claude Code의 `CLAUDE.md`는 `@<경로>` 가져오기 한 줄로 만들고, Codex·Gemini는 복사합니다 |
+
+- 복사본은 `git pull` 뒤 `install.ps1`을 다시 실행해야 갱신됩니다. 관리자 권한 PowerShell로 실행하면 링크로 만들어져 다시 실행할 필요가 없습니다(PowerShell 7과 개발자 모드 조합도 될 수 있지만 시험하지 않았습니다).
+- 제거: `install.ps1 -Uninstall`. 이 스크립트가 연결하거나 만든 것만 지웁니다.
+- Orca의 Codex 계정 폴더는 `%APPDATA%\orca\codex-accounts`로 가정했습니다. 다른 위치면 `CODEX_HOME`을 설정한 채로 실행하세요.
+- Windows에서는 아직 실제로 실행해 보지 않았습니다. macOS에서 문법 검사와 흐름 시험만 했습니다.
+
+### 2. 직접 연결하기 (참고)
+
+`install.sh`가 하는 일을 손으로 하면 이렇습니다.
+
+```sh
 H=~/orca/bckim-harness
-```
-
-다른 위치에 받았다면 `H`만 바꾸면 됩니다. 단, 스킬과 기본 지침이 규칙 파일을 `~/orca/bckim-harness/rules/`로 가리키므로, 위치를 바꾸면 그 경로도 함께 고쳐야 합니다.
-
-### 2. 도구에 연결하기
-
-모두 링크입니다. 같은 이름의 파일이 이미 있으면 `ln`이 실패하므로, 먼저 내용을 확인하고 옮겨 두세요.
-
-**Claude Code**
-
-```sh
-mkdir -p ~/.claude/skills ~/.claude/rules
-ln -s $H/AGENTS.md    ~/.claude/CLAUDE.md          # 기본 지침
-ln -s $H/rules/cpp.md ~/.claude/rules/cpp.md       # C++ 규칙 (C/C++ 파일을 다룰 때 자동 적용)
-ln -s $H              ~/.claude/skills/bckim       # 스킬 (bckim@skills-dir 플러그인으로 로드)
-```
-
-**Codex**
-
-```sh
-mkdir -p ~/.codex ~/.agents/skills
-ln -s $H/AGENTS.md ~/.codex/AGENTS.md                 # 기본 지침 (C++ 규칙도 이 안내로 읽음)
-for s in review cmake cmake-preset cmake-build cmake-rebuild vcpkg; do
-    ln -s $H/skills/$s ~/.agents/skills/$s           # 스킬 (bckim:<스킬>로 보임)
-done
-```
-
-Orca에서 띄운 Codex는 `CODEX_HOME`이 Orca 계정 폴더(`~/Library/Application Support/orca/codex-accounts/<계정>/home`)입니다. 계정마다 기본 지침도 연결하세요.
-
-```sh
-ln -s $H/AGENTS.md "$CODEX_HOME/AGENTS.md"
-```
-
-**Gemini CLI**
-
-```sh
-mkdir -p ~/.gemini
-ln -s $H/AGENTS.md ~/.gemini/GEMINI.md      # 기본 지침
-gemini extensions link $H                   # 스킬
+ln -s $H/AGENTS.md    ~/.claude/CLAUDE.md
+ln -s $H/rules/cpp.md ~/.claude/rules/cpp.md
+ln -s $H              ~/.claude/skills/bckim
+ln -s $H/AGENTS.md    ~/.codex/AGENTS.md
+ln -s $H/AGENTS.md    "$CODEX_HOME/AGENTS.md"         # Orca에서 띄운 Codex
+for s in $H/skills/*/; do ln -s $s ~/.agents/skills/$(basename $s); done
+ln -s $H/AGENTS.md    ~/.gemini/GEMINI.md
+gemini extensions link $H
 ```
 
 ### 3. 확인하기
@@ -183,8 +195,10 @@ gemini extensions link $H                   # 스킬
 
 ### 업데이트와 제거
 
-- **업데이트:** `git -C $H pull`. 링크라서 다시 설치할 필요가 없습니다. 실행 중인 Claude Code 세션은 `/reload-plugins`, Codex·Gemini는 새 세션부터 반영됩니다.
-- **제거:** 위에서 만든 링크만 지우면 됩니다(`rm ~/.claude/skills/bckim` 등). 저장소 파일은 그대로 남습니다.
+- **업데이트:** `git -C ~/orca/bckim-harness pull`. 링크라서 다시 설치할 필요가 없습니다. 새 스킬이 추가됐으면
+  `install.sh`를 한 번 더 실행합니다. Windows는 기본 지침이 복사본일 수 있으므로 `pull` 뒤 항상 `install.ps1`을 다시
+  실행합니다. 실행 중인 Claude Code 세션은 `/reload-plugins`, Codex·Gemini는 새 세션부터 반영됩니다.
+- **제거:** `~/orca/bckim-harness/install.sh --uninstall`(Windows는 `install.ps1 -Uninstall`). 이 저장소에 연결된 것만 지우고, 다른 파일과 저장소는 그대로 둡니다.
 
 ### 지원 범위
 
@@ -198,6 +212,8 @@ gemini extensions link $H                   # 스킬
 ## 구조와 확장
 
 ```
+install.sh               # 설치·제거 (macOS·Linux)
+install.ps1              # 설치·제거 (Windows)
 AGENTS.md                # 기본 지침
 rules/                   # 언어 규칙 (cpp.md, cpp.clang-format)
 skills/                  # review, cmake, cmake-preset, cmake-build, cmake-rebuild, vcpkg
@@ -205,7 +221,7 @@ skills/                  # review, cmake, cmake-preset, cmake-build, cmake-rebui
 gemini-extension.json    # Gemini CLI 매니페스트
 ```
 
-- **새 스킬:** `skills/<이름>/SKILL.md`를 만듭니다. 폴더 이름과 `name`을 같게 하고, Codex용 `~/.agents/skills/<이름>` 링크를 하나 더 만듭니다.
-- **새 언어 규칙:** `rules/<언어>.md`를 만들고, `AGENTS.md`의 언어별 규칙 절과 `~/.claude/rules/` 링크를 함께 추가합니다. 맨 위에 `paths:`(파일 패턴)를 넣으면 Claude Code는 그 파일을 다룰 때만 규칙을 붙입니다.
+- **새 스킬:** `skills/<이름>/SKILL.md`를 만들고 폴더 이름과 `name`을 같게 합니다. `install.sh`(Windows는 `install.ps1`)를 다시 실행하면 Codex용 링크가 생깁니다.
+- **새 언어 규칙:** `rules/<언어>.md`를 만들고 `AGENTS.md`의 언어별 규칙 절에 안내를 추가합니다. `install.sh`를 다시 실행하면 `~/.claude/rules/` 링크가 생깁니다(Windows는 규칙 폴더째 연결되어 있어 자동으로 보입니다). 맨 위에 `paths:`(파일 패턴)를 넣으면 Claude Code는 그 파일을 다룰 때만 규칙을 붙입니다.
 - **설명은 반드시 한글로:** 스킬의 `description`·`argument-hint`와 플러그인 설명은 `/bckim` 명령 목록에 그대로 보이므로 한글로 씁니다.
 - **검증:** `claude plugin validate .`
