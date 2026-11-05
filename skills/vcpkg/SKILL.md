@@ -85,6 +85,16 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/../vcpkg/triplets/<기본 triplet 경로>)
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/Linkage.cmake)
 ```
 
+`arm64-osx.cmake`와 `arm64-ios-simulator.cmake`에는 아래 두 줄을 더한다. 값은 `CMakePresets.json`의 해당 프리셋
+`CMAKE_OSX_DEPLOYMENT_TARGET`과 같게 한다(macOS `12.0`, iOS `15.0`). 빠지면 vcpkg가 SDK 기본 버전으로 빌드해 링크할 때
+`was built for newer 'macOS' version` 경고가 난다. 프리셋 값을 바꾸면 여기도 같이 바꾼다.
+
+```cmake
+
+# 프리셋(CMAKE_OSX_DEPLOYMENT_TARGET)과 같은 대상으로 빌드한다. 다르면 링크할 때 버전 경고가 난다
+SET(VCPKG_OSX_DEPLOYMENT_TARGET 12.0)
+```
+
 `CMakePresets.json` 변경
 
 | 프리셋 | 추가 |
